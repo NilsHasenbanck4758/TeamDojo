@@ -5,7 +5,6 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ISkillRate, SkillRate } from 'app/shared/model/skill-rate.model';
 import { Comment, IComment } from 'app/shared/model/comment.model';
 import { HttpResponse } from '@angular/common/http';
-import { ITeam } from 'app/shared/model/team.model';
 import * as moment from 'moment';
 import { CommentService } from 'app/entities/comment';
 import { TeamsSelectionService } from 'app/shared/teams-selection/teams-selection.service';

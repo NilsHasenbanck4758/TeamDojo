@@ -1,10 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
 import { JhiEventManager, JhiAlertService, JhiDataUtils } from 'ng-jhipster';
 
 import { IImage } from 'app/shared/model/image.model';
-import { Principal } from 'app/core';
+import { AccountService } from 'app/core';
 import { ImageService } from './image.service';
 
 @Component({
@@ -17,25 +18,31 @@ export class ImageComponent implements OnInit, OnDestroy {
     eventSubscriber: Subscription;
 
     constructor(
-        private imageService: ImageService,
-        private jhiAlertService: JhiAlertService,
-        private dataUtils: JhiDataUtils,
-        private eventManager: JhiEventManager,
-        private principal: Principal
+        protected imageService: ImageService,
+        protected jhiAlertService: JhiAlertService,
+        protected dataUtils: JhiDataUtils,
+        protected eventManager: JhiEventManager,
+        protected accountService: AccountService
     ) {}
 
     loadAll() {
-        this.imageService.query().subscribe(
-            (res: HttpResponse<IImage[]>) => {
-                this.images = res.body;
-            },
-            (res: HttpErrorResponse) => this.onError(res.message)
-        );
+        this.imageService
+            .query()
+            .pipe(
+                filter((res: HttpResponse<IImage[]>) => res.ok),
+                map((res: HttpResponse<IImage[]>) => res.body)
+            )
+            .subscribe(
+                (res: IImage[]) => {
+                    this.images = res;
+                },
+                (res: HttpErrorResponse) => this.onError(res.message)
+            );
     }
 
     ngOnInit() {
         this.loadAll();
-        this.principal.identity().then(account => {
+        this.accountService.identity().then(account => {
             this.currentAccount = account;
         });
         this.registerChangeInImages();
@@ -61,7 +68,7 @@ export class ImageComponent implements OnInit, OnDestroy {
         this.eventSubscriber = this.eventManager.subscribe('imageListModification', response => this.loadAll());
     }
 
-    private onError(errorMessage: string) {
+    protected onError(errorMessage: string) {
         this.jhiAlertService.error(errorMessage, null, null);
     }
 }

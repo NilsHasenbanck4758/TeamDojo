@@ -1,9 +1,9 @@
 package de.otto.teamdojo.service.dto;
 
+import javax.persistence.Lob;
 import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.util.Objects;
-import javax.persistence.Lob;
 
 /**
  * A DTO for the Image entity.
@@ -17,14 +17,15 @@ public class ImageDTO implements Serializable {
 
     @Lob
     private byte[] small;
-    private String smallContentType;
 
+    private String smallContentType;
     @Lob
     private byte[] medium;
-    private String mediumContentType;
 
+    private String mediumContentType;
     @Lob
     private byte[] large;
+
     private String largeContentType;
 
     public Long getId() {

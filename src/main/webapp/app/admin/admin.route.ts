@@ -1,16 +1,6 @@
 import { Routes } from '@angular/router';
 
-import {
-    auditsRoute,
-    configurationRoute,
-    docsRoute,
-    healthRoute,
-    logsRoute,
-    metricsRoute,
-    trackerRoute,
-    userMgmtRoute,
-    userDialogRoute
-} from './';
+import { auditsRoute, configurationRoute, docsRoute, healthRoute, logsRoute, metricsRoute, trackerRoute, userMgmtRoute } from './';
 
 import { UserRouteAccessService } from 'app/core';
 
@@ -20,11 +10,9 @@ export const adminState: Routes = [
     {
         path: '',
         data: {
-            authorities: ['ROLE_ADMIN'],
-            pageTitle: 'global.menu.admin.main'
+            authorities: ['ROLE_ADMIN']
         },
         canActivate: [UserRouteAccessService],
         children: ADMIN_ROUTES
-    },
-    ...userDialogRoute
+    }
 ];

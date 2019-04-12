@@ -12,10 +12,11 @@ import { BreadcrumbService } from 'app/layouts/navbar/breadcrumb.service';
 import { DimensionService } from 'app/entities/dimension';
 import { Progress } from 'app/shared/achievement/model/progress.model';
 import 'simplebar';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 import { AchievableSkill } from 'app/shared/model/achievable-skill.model';
 import { SkillService } from 'app/entities/skill';
 import { SkillStatusUtils } from 'app/shared/model/skill-status';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
     selector: 'jhi-overview-skills',
@@ -60,11 +61,11 @@ export class OverviewSkillsComponent implements OnInit, OnChanges {
                 this.activeLevel = null;
                 this.activeBadge = null;
                 if (params.get('level')) {
-                    this.activeLevel = (this.levels || []).find((level: ILevel) => level.id === Number.parseInt(params.get('level')));
+                    this.activeLevel = (this.levels || []).find((level: ILevel) => level.id === Number.parseInt(params.get('level'), 10));
                     this.activeSkills = this.activeLevel ? this.activeLevel.skills : [];
                     this.updateBreadcrumb();
                 } else if (params.get('badge')) {
-                    this.activeBadge = (this.badges || []).find((badge: IBadge) => badge.id === Number.parseInt(params.get('badge')));
+                    this.activeBadge = (this.badges || []).find((badge: IBadge) => badge.id === Number.parseInt(params.get('badge'), 10));
                     this.activeSkills = this.activeBadge ? this.activeBadge.skills : [];
                     this.updateBreadcrumb();
                 } else {
@@ -80,8 +81,8 @@ export class OverviewSkillsComponent implements OnInit, OnChanges {
         this.search = '';
         this.search$ = new Subject<string>();
         this.search$
-            .debounceTime(400)
-            .distinctUntilChanged()
+            .pipe(debounceTime(400))
+            .pipe(distinctUntilChanged())
             .subscribe(value => {
                 this.search = value;
                 return value;

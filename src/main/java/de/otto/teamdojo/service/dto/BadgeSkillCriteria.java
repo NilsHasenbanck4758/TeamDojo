@@ -4,7 +4,7 @@ import io.github.jhipster.service.filter.Filter;
 import io.github.jhipster.service.filter.LongFilter;
 
 import java.io.Serializable;
-
+import java.util.Objects;
 
 /**
  * Criteria class for the BadgeSkill entity. This class is used in BadgeSkillResource to
@@ -17,15 +17,11 @@ import java.io.Serializable;
 public class BadgeSkillCriteria implements Serializable {
     private static final long serialVersionUID = 1L;
 
-
     private LongFilter id;
 
     private LongFilter badgeId;
 
     private LongFilter skillId;
-
-    public BadgeSkillCriteria() {
-    }
 
     public LongFilter getId() {
         return id;
@@ -51,12 +47,37 @@ public class BadgeSkillCriteria implements Serializable {
         this.skillId = skillId;
     }
 
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final BadgeSkillCriteria that = (BadgeSkillCriteria) o;
+        return
+            Objects.equals(id, that.id) &&
+            Objects.equals(badgeId, that.badgeId) &&
+            Objects.equals(skillId, that.skillId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(
+        id,
+        badgeId,
+        skillId
+        );
+    }
+
     @Override
     public String toString() {
         return "BadgeSkillCriteria{" +
-            (id != null ? "id=" + id + ", " : "") +
-            (badgeId != null ? "badgeId=" + badgeId + ", " : "") +
-            (skillId != null ? "skillId=" + skillId + ", " : "") +
+                (id != null ? "id=" + id + ", " : "") +
+                (badgeId != null ? "badgeId=" + badgeId + ", " : "") +
+                (skillId != null ? "skillId=" + skillId + ", " : "") +
             "}";
     }
 

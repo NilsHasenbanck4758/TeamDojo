@@ -1,20 +1,17 @@
 package de.otto.teamdojo.web.rest;
 
 import de.otto.teamdojo.TeamdojoApp;
-
 import de.otto.teamdojo.domain.Report;
+import de.otto.teamdojo.domain.enumeration.ReportType;
 import de.otto.teamdojo.repository.ReportRepository;
+import de.otto.teamdojo.service.ReportQueryService;
 import de.otto.teamdojo.service.ReportService;
 import de.otto.teamdojo.service.dto.ReportDTO;
 import de.otto.teamdojo.service.mapper.ReportMapper;
 import de.otto.teamdojo.web.rest.errors.ExceptionTranslator;
-import de.otto.teamdojo.service.dto.ReportCriteria;
-import de.otto.teamdojo.service.ReportQueryService;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -30,15 +27,12 @@ import javax.persistence.EntityManager;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.ArrayList;
 
 import static de.otto.teamdojo.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-import de.otto.teamdojo.domain.enumeration.ReportType;
 /**
  * Test class for the ReportResource REST controller.
  *

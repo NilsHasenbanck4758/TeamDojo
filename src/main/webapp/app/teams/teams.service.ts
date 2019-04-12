@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { SERVER_API_URL } from 'app/app.constants';
 import { createRequestOption } from 'app/shared';
@@ -9,23 +10,23 @@ import { ITeam } from 'app/shared/model/team.model';
 export type EntityResponseType = HttpResponse<ITeam>;
 export type EntityArrayResponseType = HttpResponse<ITeam[]>;
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class TeamsService {
-    private resourceUrl = SERVER_API_URL + 'api/teams';
+    public resourceUrl = SERVER_API_URL + 'api/teams';
 
-    constructor(private http: HttpClient) {}
+    constructor(protected http: HttpClient) {}
 
     find(id: number): Observable<EntityResponseType> {
         return this.http
             .get<ITeam>(`${this.resourceUrl}/${id}`, { observe: 'response' })
-            .map((res: EntityResponseType) => this.convertResponse(res));
+            .pipe(map((res: EntityResponseType) => this.convertResponse(res)));
     }
 
     query(req?: any): Observable<EntityArrayResponseType> {
         const options = createRequestOption(req);
         return this.http
             .get<ITeam[]>(this.resourceUrl, { params: options, observe: 'response' })
-            .map((res: EntityArrayResponseType) => this.convertArrayResponse(res));
+            .pipe(map((res: EntityArrayResponseType) => this.convertArrayResponse(res)));
     }
 
     private convertResponse(res: EntityResponseType): EntityResponseType {

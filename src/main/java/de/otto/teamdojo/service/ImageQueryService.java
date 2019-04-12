@@ -1,7 +1,12 @@
 package de.otto.teamdojo.service;
 
-import java.util.List;
-
+import de.otto.teamdojo.domain.*;
+import de.otto.teamdojo.domain.Image;
+import de.otto.teamdojo.repository.ImageRepository;
+import de.otto.teamdojo.service.dto.ImageCriteria;
+import de.otto.teamdojo.service.dto.ImageDTO;
+import de.otto.teamdojo.service.mapper.ImageMapper;
+import io.github.jhipster.service.QueryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -10,15 +15,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import io.github.jhipster.service.QueryService;
-
-import de.otto.teamdojo.domain.Image;
-import de.otto.teamdojo.domain.*; // for static metamodels
-import de.otto.teamdojo.repository.ImageRepository;
-import de.otto.teamdojo.service.dto.ImageCriteria;
-
-import de.otto.teamdojo.service.dto.ImageDTO;
-import de.otto.teamdojo.service.mapper.ImageMapper;
+import java.util.List;
 
 /**
  * Service for executing complex queries for Image entities in the database.
@@ -68,6 +65,18 @@ public class ImageQueryService extends QueryService<Image> {
     }
 
     /**
+     * Return the number of matching entities in the database
+     * @param criteria The object which holds all the filters, which the entities should match.
+     * @return the number of matching entities.
+     */
+    @Transactional(readOnly = true)
+    public long countByCriteria(ImageCriteria criteria) {
+        log.debug("count by criteria : {}", criteria);
+        final Specification<Image> specification = createSpecification(criteria);
+        return imageRepository.count(specification);
+    }
+
+    /**
      * Function to convert ImageCriteria to a {@link Specification}
      */
     private Specification<Image> createSpecification(ImageCriteria criteria) {
@@ -82,5 +91,4 @@ public class ImageQueryService extends QueryService<Image> {
         }
         return specification;
     }
-
 }

@@ -53,9 +53,14 @@ public class Skill implements Serializable {
     @Column(name = "score", nullable = false)
     private Integer score;
 
-    @DecimalMin(value = "0") @DecimalMax(value = "5") @Column(name = "rate_score") private Double rateScore;
+    @DecimalMin(value = "0")
+    @DecimalMax(value = "5")
+    @Column(name = "rate_score")
+    private Double rateScore;
 
-    @Min(value = 0) @Column(name = "rate_count") private Integer rateCount;
+    @Min(value = 0)
+    @Column(name = "rate_count")
+    private Integer rateCount;
 
     @OneToMany(mappedBy = "skill")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)

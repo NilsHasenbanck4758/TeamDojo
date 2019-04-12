@@ -9,6 +9,7 @@ import { ITeamSkill } from 'app/shared/model/team-skill.model';
 import { ISkill } from 'app/shared/model/skill.model';
 import { TeamScoreCalculation } from 'app/shared/util/team-score-calculation';
 import { OrganizationService } from 'app/entities/organization';
+import { take } from 'rxjs/operators';
 
 @Component({
     selector: 'jhi-teams-status',
@@ -31,7 +32,7 @@ export class TeamsStatusComponent implements OnInit, OnChanges {
         this.team.skills = this.teamSkills;
         this.organizationService
             .query()
-            .take(1)
+            .pipe(take(1))
             .subscribe(res => {
                 this.levelUpScore = res && res.body[0] ? res.body[0].levelUpScore : 0;
             });

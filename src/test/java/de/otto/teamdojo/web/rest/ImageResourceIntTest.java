@@ -1,21 +1,17 @@
 package de.otto.teamdojo.web.rest;
 
 import de.otto.teamdojo.TeamdojoApp;
-
 import de.otto.teamdojo.domain.Image;
 import de.otto.teamdojo.repository.ImageRepository;
+import de.otto.teamdojo.service.ImageQueryService;
 import de.otto.teamdojo.service.ImageService;
 import de.otto.teamdojo.service.dto.ImageDTO;
 import de.otto.teamdojo.service.mapper.ImageMapper;
 import de.otto.teamdojo.web.rest.errors.ExceptionTranslator;
-import de.otto.teamdojo.service.dto.ImageCriteria;
-import de.otto.teamdojo.service.ImageQueryService;
-
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -30,7 +26,6 @@ import org.springframework.util.Base64Utils;
 
 import javax.persistence.EntityManager;
 import java.util.List;
-import java.util.ArrayList;
 
 import static de.otto.teamdojo.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;

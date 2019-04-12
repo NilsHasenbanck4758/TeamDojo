@@ -2,9 +2,9 @@ package de.otto.teamdojo.service.dto;
 
 import de.otto.teamdojo.domain.enumeration.SkillStatus;
 
+import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
 /**

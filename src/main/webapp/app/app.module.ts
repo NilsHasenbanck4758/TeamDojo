@@ -6,6 +6,7 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { Ng2Webstorage } from 'ngx-webstorage';
 import { JhiEventManager } from 'ng-jhipster';
 import { StarRatingModule } from 'angular-star-rating';
+import { NgbDatepickerConfig } from '@ng-bootstrap/ng-bootstrap';
 
 import { AuthExpiredInterceptor } from './blocks/interceptor/auth-expired.interceptor';
 import { ErrorHandlerInterceptor } from './blocks/interceptor/errorhandler.interceptor';
@@ -20,6 +21,7 @@ import { TeamsModule } from './teams/teams.module';
 import { FeedbackModule } from './feedback/feedback.module';
 import { PaginationConfig } from './blocks/config/uib-pagination.config';
 import { StateStorageService } from 'app/core/auth/state-storage.service';
+import * as moment from 'moment';
 // jhipster-needle-angular-add-module-import JHipster will add new module here
 
 import {
@@ -72,4 +74,8 @@ import {
     ],
     bootstrap: [JhiMainComponent]
 })
-export class TeamdojoAppModule {}
+export class TeamdojoAppModule {
+    constructor(private dpConfig: NgbDatepickerConfig) {
+        this.dpConfig.minDate = { year: moment().year() - 100, month: 1, day: 1 };
+    }
+}

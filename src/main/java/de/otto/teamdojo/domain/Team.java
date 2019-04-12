@@ -1,17 +1,16 @@
 package de.otto.teamdojo.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
-
 import java.io.Serializable;
 import java.util.HashSet;
-import java.util.Set;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * A Team.
@@ -22,7 +21,7 @@ import java.util.Objects;
 public class Team implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
+    
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
     @SequenceGenerator(name = "sequenceGenerator")
@@ -48,16 +47,15 @@ public class Team implements Serializable {
     @ManyToMany(fetch = FetchType.EAGER)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @JoinTable(name = "team_participations",
-               joinColumns = @JoinColumn(name="teams_id", referencedColumnName="id"),
-               inverseJoinColumns = @JoinColumn(name="participations_id", referencedColumnName="id"))
+               joinColumns = @JoinColumn(name = "teams_id", referencedColumnName = "id"),
+               inverseJoinColumns = @JoinColumn(name = "participations_id", referencedColumnName = "id"))
     private Set<Dimension> participations = new HashSet<>();
 
     @OneToMany(mappedBy = "team" , cascade = CascadeType.REMOVE)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<TeamSkill> skills = new HashSet<>();
-
     @ManyToOne
-    @JsonIgnoreProperties("")
+    @JsonIgnoreProperties("teams")
     private Image image;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove

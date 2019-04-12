@@ -1,7 +1,12 @@
 package de.otto.teamdojo.service;
 
-import java.util.List;
-
+import de.otto.teamdojo.domain.*;
+import de.otto.teamdojo.domain.Team;
+import de.otto.teamdojo.repository.TeamRepository;
+import de.otto.teamdojo.service.dto.TeamCriteria;
+import de.otto.teamdojo.service.dto.TeamDTO;
+import de.otto.teamdojo.service.mapper.TeamMapper;
+import io.github.jhipster.service.QueryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -10,15 +15,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import io.github.jhipster.service.QueryService;
-
-import de.otto.teamdojo.domain.Team;
-import de.otto.teamdojo.domain.*; // for static metamodels
-import de.otto.teamdojo.repository.TeamRepository;
-import de.otto.teamdojo.service.dto.TeamCriteria;
-
-import de.otto.teamdojo.service.dto.TeamDTO;
-import de.otto.teamdojo.service.mapper.TeamMapper;
+import javax.persistence.criteria.JoinType;
+import java.util.List;
 
 /**
  * Service for executing complex queries for Team entities in the database.
@@ -70,6 +68,18 @@ public class TeamQueryService extends QueryService<Team> {
     }
 
     /**
+     * Return the number of matching entities in the database
+     * @param criteria The object which holds all the filters, which the entities should match.
+     * @return the number of matching entities.
+     */
+    @Transactional(readOnly = true)
+    public long countByCriteria(TeamCriteria criteria) {
+        log.debug("count by criteria : {}", criteria);
+        final Specification<Team> specification = createSpecification(criteria);
+        return teamRepository.count(specification);
+    }
+
+    /**
      * Function to convert TeamCriteria to a {@link Specification}
      */
     private Specification<Team> createSpecification(TeamCriteria criteria) {
@@ -91,16 +101,18 @@ public class TeamQueryService extends QueryService<Team> {
                 specification = specification.and(buildStringSpecification(criteria.getContactPerson(), Team_.contactPerson));
             }
             if (criteria.getParticipationsId() != null) {
-                specification = specification.and(buildReferringEntitySpecification(criteria.getParticipationsId(), Team_.participations, Dimension_.id));
+                specification = specification.and(buildSpecification(criteria.getParticipationsId(),
+                    root -> root.join(Team_.participations, JoinType.LEFT).get(Dimension_.id)));
             }
             if (criteria.getSkillsId() != null) {
-                specification = specification.and(buildReferringEntitySpecification(criteria.getSkillsId(), Team_.skills, TeamSkill_.id));
+                specification = specification.and(buildSpecification(criteria.getSkillsId(),
+                    root -> root.join(Team_.skills, JoinType.LEFT).get(TeamSkill_.id)));
             }
             if (criteria.getImageId() != null) {
-                specification = specification.and(buildReferringEntitySpecification(criteria.getImageId(), Team_.image, Image_.id));
+                specification = specification.and(buildSpecification(criteria.getImageId(),
+                    root -> root.join(Team_.image, JoinType.LEFT).get(Image_.id)));
             }
         }
         return specification;
     }
-
 }

@@ -1,9 +1,6 @@
 package de.otto.teamdojo.service;
 
-import de.otto.teamdojo.domain.LevelSkill;
-import de.otto.teamdojo.domain.LevelSkill_;
-import de.otto.teamdojo.domain.Level_;
-import de.otto.teamdojo.domain.Skill_;
+import de.otto.teamdojo.domain.*;
 import de.otto.teamdojo.repository.LevelSkillRepository;
 import de.otto.teamdojo.service.dto.LevelSkillCriteria;
 import de.otto.teamdojo.service.dto.LevelSkillDTO;
@@ -17,6 +14,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.criteria.JoinType;
 import java.util.List;
 
 /**
@@ -57,7 +55,7 @@ public class LevelSkillQueryService extends QueryService<LevelSkill> {
      * Return a {@link Page} of {@link LevelSkillDTO} which matches the criteria from the database
      *
      * @param criteria The object which holds all the filters, which the entities should match.
-     * @param page     The page, which should be returned.
+     * @param page The page, which should be returned.
      * @return the matching entities.
      */
     @Transactional(readOnly = true)
@@ -66,6 +64,18 @@ public class LevelSkillQueryService extends QueryService<LevelSkill> {
         final Specification<LevelSkill> specification = createSpecification(criteria);
         return levelSkillRepository.findAll(specification, page)
             .map(levelSkillMapper::toDto);
+    }
+
+    /**
+     * Return the number of matching entities in the database
+     * @param criteria The object which holds all the filters, which the entities should match.
+     * @return the number of matching entities.
+     */
+    @Transactional(readOnly = true)
+    public long countByCriteria(LevelSkillCriteria criteria) {
+        log.debug("count by criteria : {}", criteria);
+        final Specification<LevelSkill> specification = createSpecification(criteria);
+        return levelSkillRepository.count(specification);
     }
 
     /**
@@ -78,13 +88,14 @@ public class LevelSkillQueryService extends QueryService<LevelSkill> {
                 specification = specification.and(buildSpecification(criteria.getId(), LevelSkill_.id));
             }
             if (criteria.getSkillId() != null) {
-                specification = specification.and(buildReferringEntitySpecification(criteria.getSkillId(), LevelSkill_.skill, Skill_.id));
+                specification = specification.and(buildSpecification(criteria.getSkillId(),
+                    root -> root.join(LevelSkill_.skill, JoinType.LEFT).get(Skill_.id)));
             }
             if (criteria.getLevelId() != null) {
-                specification = specification.and(buildReferringEntitySpecification(criteria.getLevelId(), LevelSkill_.level, Level_.id));
+                specification = specification.and(buildSpecification(criteria.getLevelId(),
+                    root -> root.join(LevelSkill_.level, JoinType.LEFT).get(Level_.id)));
             }
         }
         return specification;
     }
-
 }

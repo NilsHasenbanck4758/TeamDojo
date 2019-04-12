@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
 import { JhiAlertService } from 'ng-jhipster';
-
 import { ITeam } from 'app/shared/model/team.model';
 import { TeamService } from './team.service';
 import { IDimension } from 'app/shared/model/dimension.model';
@@ -16,7 +16,7 @@ import { ImageService } from 'app/entities/image';
     templateUrl: './team-update.component.html'
 })
 export class TeamUpdateComponent implements OnInit {
-    private _team: ITeam;
+    team: ITeam;
     isSaving: boolean;
 
     dimensions: IDimension[];
@@ -24,30 +24,32 @@ export class TeamUpdateComponent implements OnInit {
     images: IImage[];
 
     constructor(
-        private jhiAlertService: JhiAlertService,
-        private teamService: TeamService,
-        private dimensionService: DimensionService,
-        private imageService: ImageService,
-        private route: ActivatedRoute
+        protected jhiAlertService: JhiAlertService,
+        protected teamService: TeamService,
+        protected dimensionService: DimensionService,
+        protected imageService: ImageService,
+        protected activatedRoute: ActivatedRoute
     ) {}
 
     ngOnInit() {
         this.isSaving = false;
-        this.route.data.subscribe(({ team }) => {
-            this.team = team.body ? team.body : team;
+        this.activatedRoute.data.subscribe(({ team }) => {
+            this.team = team;
         });
-        this.dimensionService.query().subscribe(
-            (res: HttpResponse<IDimension[]>) => {
-                this.dimensions = res.body;
-            },
-            (res: HttpErrorResponse) => this.onError(res.message)
-        );
-        this.imageService.query().subscribe(
-            (res: HttpResponse<IImage[]>) => {
-                this.images = res.body;
-            },
-            (res: HttpErrorResponse) => this.onError(res.message)
-        );
+        this.dimensionService
+            .query()
+            .pipe(
+                filter((mayBeOk: HttpResponse<IDimension[]>) => mayBeOk.ok),
+                map((response: HttpResponse<IDimension[]>) => response.body)
+            )
+            .subscribe((res: IDimension[]) => (this.dimensions = res), (res: HttpErrorResponse) => this.onError(res.message));
+        this.imageService
+            .query()
+            .pipe(
+                filter((mayBeOk: HttpResponse<IImage[]>) => mayBeOk.ok),
+                map((response: HttpResponse<IImage[]>) => response.body)
+            )
+            .subscribe((res: IImage[]) => (this.images = res), (res: HttpErrorResponse) => this.onError(res.message));
     }
 
     previousState() {
@@ -63,20 +65,20 @@ export class TeamUpdateComponent implements OnInit {
         }
     }
 
-    private subscribeToSaveResponse(result: Observable<HttpResponse<ITeam>>) {
-        result.subscribe((res: HttpResponse<ITeam>) => this.onSaveSuccess(res.body), (res: HttpErrorResponse) => this.onSaveError());
+    protected subscribeToSaveResponse(result: Observable<HttpResponse<ITeam>>) {
+        result.subscribe((res: HttpResponse<ITeam>) => this.onSaveSuccess(), (res: HttpErrorResponse) => this.onSaveError());
     }
 
-    private onSaveSuccess(result: ITeam) {
+    protected onSaveSuccess() {
         this.isSaving = false;
         this.previousState();
     }
 
-    private onSaveError() {
+    protected onSaveError() {
         this.isSaving = false;
     }
 
-    private onError(errorMessage: string) {
+    protected onError(errorMessage: string) {
         this.jhiAlertService.error(errorMessage, null, null);
     }
 
@@ -97,12 +99,5 @@ export class TeamUpdateComponent implements OnInit {
             }
         }
         return option;
-    }
-    get team() {
-        return this._team;
-    }
-
-    set team(team: ITeam) {
-        this._team = team;
     }
 }

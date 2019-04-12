@@ -1,10 +1,10 @@
 package de.otto.teamdojo.config;
 
-import de.otto.teamdojo.security.AuthoritiesConstants;
+import de.otto.teamdojo.security.*;
+
 import io.github.jhipster.config.JHipsterProperties;
-import io.github.jhipster.security.AjaxAuthenticationFailureHandler;
-import io.github.jhipster.security.AjaxAuthenticationSuccessHandler;
-import io.github.jhipster.security.AjaxLogoutSuccessHandler;
+import io.github.jhipster.security.*;
+
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,7 +28,6 @@ import org.zalando.problem.spring.web.advice.security.SecurityProblemSupport;
 
 import javax.annotation.PostConstruct;
 
-
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
@@ -47,8 +46,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private final SecurityProblemSupport problemSupport;
 
-    public SecurityConfiguration(AuthenticationManagerBuilder authenticationManagerBuilder, UserDetailsService userDetailsService,
-                                 JHipsterProperties jHipsterProperties, RememberMeServices rememberMeServices, CorsFilter corsFilter, SecurityProblemSupport problemSupport) {
+    public SecurityConfiguration(AuthenticationManagerBuilder authenticationManagerBuilder,
+                                 UserDetailsService userDetailsService,
+                                 JHipsterProperties jHipsterProperties,
+                                 RememberMeServices rememberMeServices,
+                                 CorsFilter corsFilter,
+                                 SecurityProblemSupport problemSupport) {
         this.authenticationManagerBuilder = authenticationManagerBuilder;
         this.userDetailsService = userDetailsService;
         this.jHipsterProperties = jHipsterProperties;
@@ -101,74 +104,74 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             .antMatchers("/app/**/*.{js,html}")
             .antMatchers("/i18n/**")
             .antMatchers("/content/**")
+            .antMatchers("/h2-console/**")
             .antMatchers("/swagger-ui/index.html")
             .antMatchers("/test/**");
     }
 
     @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    public void configure(HttpSecurity http) throws Exception {
         http
             .csrf()
-            .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
             .and()
-            .addFilterBefore(corsFilter, CsrfFilter.class)
-            .exceptionHandling()
-            .authenticationEntryPoint(problemSupport)
-            .accessDeniedHandler(problemSupport)
+                .addFilterBefore(corsFilter, CsrfFilter.class)
+                .exceptionHandling()
+                .authenticationEntryPoint(problemSupport)
+                .accessDeniedHandler(problemSupport)
             .and()
-            .rememberMe()
-            .rememberMeServices(rememberMeServices)
-            .rememberMeParameter("remember-me")
-            .key(jHipsterProperties.getSecurity().getRememberMe().getKey())
+                .rememberMe()
+                .rememberMeServices(rememberMeServices)
+                .rememberMeParameter("remember-me")
+                .key(jHipsterProperties.getSecurity().getRememberMe().getKey())
             .and()
-            .formLogin()
-            .loginProcessingUrl("/api/authentication")
-            .successHandler(ajaxAuthenticationSuccessHandler())
-            .failureHandler(ajaxAuthenticationFailureHandler())
-            .usernameParameter("j_username")
-            .passwordParameter("j_password")
-            .permitAll()
+                .formLogin()
+                .loginProcessingUrl("/api/authentication")
+                .successHandler(ajaxAuthenticationSuccessHandler())
+                .failureHandler(ajaxAuthenticationFailureHandler())
+                .usernameParameter("j_username")
+                .passwordParameter("j_password")
+                .permitAll()
             .and()
-            .logout()
-            .logoutUrl("/api/logout")
-            .logoutSuccessHandler(ajaxLogoutSuccessHandler())
-            .permitAll()
+                .logout()
+                .logoutUrl("/api/logout")
+                .logoutSuccessHandler(ajaxLogoutSuccessHandler())
+                .permitAll()
             .and()
-            .headers()
-            .frameOptions()
-            .disable()
+                .headers()
+                .frameOptions()
+                .disable()
             .and()
-            .authorizeRequests()
-            .antMatchers(HttpMethod.GET, "/api/teams/**").permitAll()
-            .antMatchers(HttpMethod.PUT, "/api/teams/*/achievable-skills/**").permitAll()
-            .antMatchers(HttpMethod.GET, "/api/badges/**").permitAll()
-            .antMatchers(HttpMethod.GET, "/api/dimensions/**").permitAll()
-            .antMatchers(HttpMethod.GET, "/api/levels/**").permitAll()
-            .antMatchers(HttpMethod.GET, "/api/skills/**").permitAll()
-            .antMatchers(HttpMethod.POST, "/api/skills/*/vote/**").permitAll()
-            .antMatchers(HttpMethod.GET, "/api/team-skills/**").permitAll()
-            .antMatchers(HttpMethod.GET, "/api/level-skills/**").permitAll()
-            .antMatchers(HttpMethod.GET, "/api/badge-skills/**").permitAll()
-            .antMatchers(HttpMethod.POST, "/api/reports").permitAll()
-            .antMatchers(HttpMethod.GET, "/api/comments/**").permitAll()
-            .antMatchers(HttpMethod.POST, "/api/comments").permitAll()
-            .antMatchers(HttpMethod.GET, "/api/organizations").permitAll()
-            .antMatchers(HttpMethod.GET, "/api/activities/**").permitAll()
-            .antMatchers(HttpMethod.GET, "/api/images/**").permitAll()
-            .antMatchers("/api/register").permitAll()
-            .antMatchers("/api/activate").permitAll()
-            .antMatchers("/api/authenticate").permitAll()
-            .antMatchers("/api/account/reset-password/init").permitAll()
-            .antMatchers("/api/account/reset-password/finish").permitAll()
-            .antMatchers("/api/profile-info").permitAll()
-            .antMatchers("/api/**").authenticated()
-            .antMatchers("/websocket/tracker").hasAuthority(AuthoritiesConstants.ADMIN)
-            .antMatchers("/websocket/**").permitAll()
-            .antMatchers("/management/health").permitAll()
-            .antMatchers("/management/**").hasAuthority(AuthoritiesConstants.ADMIN)
-            .antMatchers("/v2/api-docs/**").permitAll()
-            .antMatchers("/swagger-resources/configuration/ui").permitAll()
-            .antMatchers("/swagger-ui/index.html").hasAuthority(AuthoritiesConstants.ADMIN);
-
+                .authorizeRequests()
+                .antMatchers(HttpMethod.GET, "/api/teams/**").permitAll()
+                .antMatchers(HttpMethod.PUT, "/api/teams/*/achievable-skills/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/badges/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/dimensions/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/levels/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/skills/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/skills/*/vote/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/team-skills/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/level-skills/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/badge-skills/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/reports").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/comments/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/comments").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/organizations").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/activities/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/images/**").permitAll()
+                .antMatchers("/api/register").permitAll()
+                .antMatchers("/api/activate").permitAll()
+                .antMatchers("/api/authenticate").permitAll()
+                .antMatchers("/api/account/reset-password/init").permitAll()
+                .antMatchers("/api/account/reset-password/finish").permitAll()
+                .antMatchers("/api/profile-info").permitAll()
+                .antMatchers("/api/**").authenticated()
+                .antMatchers("/websocket/tracker").hasAuthority(AuthoritiesConstants.ADMIN)
+                .antMatchers("/websocket/**").permitAll()
+                .antMatchers("/management/health").permitAll()
+                .antMatchers("/management/**").hasAuthority(AuthoritiesConstants.ADMIN)
+                .antMatchers("/v2/api-docs/**").permitAll()
+                .antMatchers("/swagger-resources/configuration/ui").permitAll()
+                .antMatchers("/swagger-ui/index.html").hasAuthority(AuthoritiesConstants.ADMIN);
     }
 }

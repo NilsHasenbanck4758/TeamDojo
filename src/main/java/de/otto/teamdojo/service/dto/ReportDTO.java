@@ -1,10 +1,11 @@
 package de.otto.teamdojo.service.dto;
 
-import java.time.Instant;
+import de.otto.teamdojo.domain.enumeration.ReportType;
+
 import javax.validation.constraints.*;
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.Objects;
-import de.otto.teamdojo.domain.enumeration.ReportType;
 
 /**
  * A DTO for the Report entity.
@@ -24,6 +25,7 @@ public class ReportDTO implements Serializable {
 
     @NotNull
     private Instant creationDate;
+
 
     public Long getId() {
         return id;

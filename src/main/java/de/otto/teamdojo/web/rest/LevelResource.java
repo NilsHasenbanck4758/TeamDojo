@@ -1,6 +1,5 @@
 package de.otto.teamdojo.web.rest;
 
-import com.codahale.metrics.annotation.Timed;
 import de.otto.teamdojo.service.LevelQueryService;
 import de.otto.teamdojo.service.LevelService;
 import de.otto.teamdojo.service.LevelSkillService;
@@ -58,7 +57,6 @@ public class LevelResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PostMapping("/levels")
-    @Timed
     public ResponseEntity<LevelDTO> createLevel(@Valid @RequestBody LevelDTO levelDTO) throws URISyntaxException {
         log.debug("REST request to save Level : {}", levelDTO);
         if (levelDTO.getId() != null) {
@@ -80,7 +78,6 @@ public class LevelResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PutMapping("/levels")
-    @Timed
     public ResponseEntity<LevelDTO> updateLevel(@Valid @RequestBody LevelDTO levelDTO) throws URISyntaxException {
         log.debug("REST request to update Level : {}", levelDTO);
         if (levelDTO.getId() == null) {
@@ -99,7 +96,6 @@ public class LevelResource {
      * @return the ResponseEntity with status 200 (OK) and the list of levels in body
      */
     @GetMapping("/levels")
-    @Timed
     public ResponseEntity<List<LevelDTO>> getAllLevels(LevelCriteria criteria, Pageable pageable) {
         log.debug("REST request to get Levels by criteria: {}", criteria);
 
@@ -108,6 +104,18 @@ public class LevelResource {
 
         List<LevelDTO> entityList = levelQueryService.findByCriteria(criteria);
         return ResponseEntity.ok().body(entityList);
+    }
+
+    /**
+    * GET  /levels/count : count all the levels.
+    *
+    * @param criteria the criterias which the requested entities should match
+    * @return the ResponseEntity with status 200 (OK) and the count in body
+    */
+    @GetMapping("/levels/count")
+    public ResponseEntity<Long> countLevels(LevelCriteria criteria) {
+        log.debug("REST request to count Levels by criteria: {}", criteria);
+        return ResponseEntity.ok().body(levelQueryService.countByCriteria(criteria));
     }
 
 
@@ -141,7 +149,6 @@ public class LevelResource {
      * @return the ResponseEntity with status 200 (OK) and with body the levelDTO, or with status 404 (Not Found)
      */
     @GetMapping("/levels/{id}")
-    @Timed
     public ResponseEntity<LevelDTO> getLevel(@PathVariable Long id) {
         log.debug("REST request to get Level : {}", id);
         Optional<LevelDTO> levelDTO = levelService.findOne(id);
@@ -155,7 +162,6 @@ public class LevelResource {
      * @return the ResponseEntity with status 200 (OK)
      */
     @DeleteMapping("/levels/{id}")
-    @Timed
     public ResponseEntity<Void> deleteLevel(@PathVariable Long id) {
         log.debug("REST request to delete Level : {}", id);
         levelService.delete(id);

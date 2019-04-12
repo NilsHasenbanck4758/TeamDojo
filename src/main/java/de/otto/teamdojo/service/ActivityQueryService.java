@@ -1,7 +1,12 @@
 package de.otto.teamdojo.service;
 
-import java.util.List;
-
+import de.otto.teamdojo.domain.*;
+import de.otto.teamdojo.domain.Activity;
+import de.otto.teamdojo.repository.ActivityRepository;
+import de.otto.teamdojo.service.dto.ActivityCriteria;
+import de.otto.teamdojo.service.dto.ActivityDTO;
+import de.otto.teamdojo.service.mapper.ActivityMapper;
+import io.github.jhipster.service.QueryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -10,15 +15,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import io.github.jhipster.service.QueryService;
-
-import de.otto.teamdojo.domain.Activity;
-import de.otto.teamdojo.domain.*; // for static metamodels
-import de.otto.teamdojo.repository.ActivityRepository;
-import de.otto.teamdojo.service.dto.ActivityCriteria;
-
-import de.otto.teamdojo.service.dto.ActivityDTO;
-import de.otto.teamdojo.service.mapper.ActivityMapper;
+import java.util.List;
 
 /**
  * Service for executing complex queries for Activity entities in the database.
@@ -68,6 +65,18 @@ public class ActivityQueryService extends QueryService<Activity> {
     }
 
     /**
+     * Return the number of matching entities in the database
+     * @param criteria The object which holds all the filters, which the entities should match.
+     * @return the number of matching entities.
+     */
+    @Transactional(readOnly = true)
+    public long countByCriteria(ActivityCriteria criteria) {
+        log.debug("count by criteria : {}", criteria);
+        final Specification<Activity> specification = createSpecification(criteria);
+        return activityRepository.count(specification);
+    }
+
+    /**
      * Function to convert ActivityCriteria to a {@link Specification}
      */
     private Specification<Activity> createSpecification(ActivityCriteria criteria) {
@@ -88,5 +97,4 @@ public class ActivityQueryService extends QueryService<Activity> {
         }
         return specification;
     }
-
 }

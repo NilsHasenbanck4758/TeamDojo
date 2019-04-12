@@ -1,10 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
 import { JhiEventManager, JhiAlertService } from 'ng-jhipster';
 
 import { ILevelSkill } from 'app/shared/model/level-skill.model';
-import { Principal } from 'app/core';
+import { AccountService } from 'app/core';
 import { LevelSkillService } from './level-skill.service';
 
 @Component({
@@ -17,24 +18,30 @@ export class LevelSkillComponent implements OnInit, OnDestroy {
     eventSubscriber: Subscription;
 
     constructor(
-        private levelSkillService: LevelSkillService,
-        private jhiAlertService: JhiAlertService,
-        private eventManager: JhiEventManager,
-        private principal: Principal
+        protected levelSkillService: LevelSkillService,
+        protected jhiAlertService: JhiAlertService,
+        protected eventManager: JhiEventManager,
+        protected accountService: AccountService
     ) {}
 
     loadAll() {
-        this.levelSkillService.query().subscribe(
-            (res: HttpResponse<ILevelSkill[]>) => {
-                this.levelSkills = res.body;
-            },
-            (res: HttpErrorResponse) => this.onError(res.message)
-        );
+        this.levelSkillService
+            .query()
+            .pipe(
+                filter((res: HttpResponse<ILevelSkill[]>) => res.ok),
+                map((res: HttpResponse<ILevelSkill[]>) => res.body)
+            )
+            .subscribe(
+                (res: ILevelSkill[]) => {
+                    this.levelSkills = res;
+                },
+                (res: HttpErrorResponse) => this.onError(res.message)
+            );
     }
 
     ngOnInit() {
         this.loadAll();
-        this.principal.identity().then(account => {
+        this.accountService.identity().then(account => {
             this.currentAccount = account;
         });
         this.registerChangeInLevelSkills();
@@ -52,7 +59,7 @@ export class LevelSkillComponent implements OnInit, OnDestroy {
         this.eventSubscriber = this.eventManager.subscribe('levelSkillListModification', response => this.loadAll());
     }
 
-    private onError(errorMessage: string) {
+    protected onError(errorMessage: string) {
         this.jhiAlertService.error(errorMessage, null, null);
     }
 }

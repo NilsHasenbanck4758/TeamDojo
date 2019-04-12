@@ -2,7 +2,7 @@ package de.otto.teamdojo.service.dto;
 
 import de.otto.teamdojo.domain.enumeration.ActivityType;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Objects;

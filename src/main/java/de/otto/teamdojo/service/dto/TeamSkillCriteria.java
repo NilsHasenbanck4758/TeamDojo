@@ -3,7 +3,7 @@ package de.otto.teamdojo.service.dto;
 import io.github.jhipster.service.filter.*;
 
 import java.io.Serializable;
-
+import java.util.Objects;
 
 /**
  * Criteria class for the TeamSkill entity. This class is used in TeamSkillResource to
@@ -14,8 +14,8 @@ import java.io.Serializable;
  * fix type specific filters.
  */
 public class TeamSkillCriteria implements Serializable {
-    private static final long serialVersionUID = 1L;
 
+    private static final long serialVersionUID = 1L;
 
     private LongFilter id;
 
@@ -30,9 +30,6 @@ public class TeamSkillCriteria implements Serializable {
     private LongFilter skillId;
 
     private LongFilter teamId;
-
-    public TeamSkillCriteria() {
-    }
 
     public LongFilter getId() {
         return id;
@@ -90,16 +87,49 @@ public class TeamSkillCriteria implements Serializable {
         this.teamId = teamId;
     }
 
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final TeamSkillCriteria that = (TeamSkillCriteria) o;
+        return
+            Objects.equals(id, that.id) &&
+            Objects.equals(completedAt, that.completedAt) &&
+            Objects.equals(verifiedAt, that.verifiedAt) &&
+            Objects.equals(irrelevant, that.irrelevant) &&
+            Objects.equals(note, that.note) &&
+            Objects.equals(skillId, that.skillId) &&
+            Objects.equals(teamId, that.teamId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(
+        id,
+        completedAt,
+        verifiedAt,
+        irrelevant,
+        note,
+        skillId,
+        teamId
+        );
+    }
+
     @Override
     public String toString() {
         return "TeamSkillCriteria{" +
-            (id != null ? "id=" + id + ", " : "") +
-            (completedAt != null ? "completedAt=" + completedAt + ", " : "") +
-            (verifiedAt != null ? "verifiedAt=" + verifiedAt + ", " : "") +
-            (irrelevant != null ? "irrelevant=" + irrelevant + ", " : "") +
-            (note != null ? "note=" + note + ", " : "") +
-            (skillId != null ? "skillId=" + skillId + ", " : "") +
-            (teamId != null ? "teamId=" + teamId + ", " : "") +
+                (id != null ? "id=" + id + ", " : "") +
+                (completedAt != null ? "completedAt=" + completedAt + ", " : "") +
+                (verifiedAt != null ? "verifiedAt=" + verifiedAt + ", " : "") +
+                (irrelevant != null ? "irrelevant=" + irrelevant + ", " : "") +
+                (note != null ? "note=" + note + ", " : "") +
+                (skillId != null ? "skillId=" + skillId + ", " : "") +
+                (teamId != null ? "teamId=" + teamId + ", " : "") +
             "}";
     }
 

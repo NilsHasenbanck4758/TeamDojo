@@ -71,7 +71,7 @@ public class TeamResourceIntTest {
 
     @Autowired
     private TeamMapper teamMapper;
-    
+
     @Mock
     private TeamService teamServiceMock;
 
@@ -224,7 +224,7 @@ public class TeamResourceIntTest {
             .andExpect(jsonPath("$.[*].slogan").value(hasItem(DEFAULT_SLOGAN.toString())))
             .andExpect(jsonPath("$.[*].contactPerson").value(hasItem(DEFAULT_CONTACT_PERSON.toString())));
     }
-    
+
     public void getAllTeamsWithEagerRelationshipsIsEnabled() throws Exception {
         TeamResource teamResource = new TeamResource(teamServiceMock, teamQueryService);
         when(teamServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
@@ -236,24 +236,24 @@ public class TeamResourceIntTest {
             .setMessageConverters(jacksonMessageConverter).build();
 
         restTeamMockMvc.perform(get("/api/teams?eagerload=true"))
-        .andExpect(status().isOk());
+            .andExpect(status().isOk());
 
         verify(teamServiceMock, times(1)).findAllWithEagerRelationships(any());
     }
 
     public void getAllTeamsWithEagerRelationshipsIsNotEnabled() throws Exception {
         TeamResource teamResource = new TeamResource(teamServiceMock, teamQueryService);
-            when(teamServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
-            MockMvc restTeamMockMvc = MockMvcBuilders.standaloneSetup(teamResource)
+        when(teamServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+        MockMvc restTeamMockMvc = MockMvcBuilders.standaloneSetup(teamResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
             .setConversionService(createFormattingConversionService())
             .setMessageConverters(jacksonMessageConverter).build();
 
         restTeamMockMvc.perform(get("/api/teams?eagerload=true"))
-        .andExpect(status().isOk());
+            .andExpect(status().isOk());
 
-            verify(teamServiceMock, times(1)).findAllWithEagerRelationships(any());
+        verify(teamServiceMock, times(1)).findAllWithEagerRelationships(any());
     }
 
     @Test

@@ -1,10 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
 import { JhiEventManager, JhiAlertService } from 'ng-jhipster';
 
 import { IComment } from 'app/shared/model/comment.model';
-import { Principal } from 'app/core';
+import { AccountService } from 'app/core';
 import { CommentService } from './comment.service';
 
 @Component({
@@ -17,24 +18,30 @@ export class CommentComponent implements OnInit, OnDestroy {
     eventSubscriber: Subscription;
 
     constructor(
-        private commentService: CommentService,
-        private jhiAlertService: JhiAlertService,
-        private eventManager: JhiEventManager,
-        private principal: Principal
+        protected commentService: CommentService,
+        protected jhiAlertService: JhiAlertService,
+        protected eventManager: JhiEventManager,
+        protected accountService: AccountService
     ) {}
 
     loadAll() {
-        this.commentService.query().subscribe(
-            (res: HttpResponse<IComment[]>) => {
-                this.comments = res.body;
-            },
-            (res: HttpErrorResponse) => this.onError(res.message)
-        );
+        this.commentService
+            .query()
+            .pipe(
+                filter((res: HttpResponse<IComment[]>) => res.ok),
+                map((res: HttpResponse<IComment[]>) => res.body)
+            )
+            .subscribe(
+                (res: IComment[]) => {
+                    this.comments = res;
+                },
+                (res: HttpErrorResponse) => this.onError(res.message)
+            );
     }
 
     ngOnInit() {
         this.loadAll();
-        this.principal.identity().then(account => {
+        this.accountService.identity().then(account => {
             this.currentAccount = account;
         });
         this.registerChangeInComments();
@@ -52,7 +59,7 @@ export class CommentComponent implements OnInit, OnDestroy {
         this.eventSubscriber = this.eventManager.subscribe('commentListModification', response => this.loadAll());
     }
 
-    private onError(errorMessage: string) {
+    protected onError(errorMessage: string) {
         this.jhiAlertService.error(errorMessage, null, null);
     }
 }

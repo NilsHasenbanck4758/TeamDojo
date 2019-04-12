@@ -19,7 +19,8 @@ import { IBadge } from 'app/shared/model/badge.model';
 import { IDimension } from 'app/shared/model/dimension.model';
 import { DimensionService } from 'app/entities/dimension';
 import 'simplebar';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
+import { distinctUntilChanged, debounceTime } from 'rxjs/operators';
 import { SkillStatusUtils } from 'app/shared/model/skill-status';
 
 @Component({
@@ -73,8 +74,8 @@ export class TeamsSkillsComponent implements OnInit, OnChanges {
         this.search = '';
         this.search$ = new Subject<string>();
         this.search$
-            .debounceTime(400)
-            .distinctUntilChanged()
+            .pipe(debounceTime(400))
+            .pipe(distinctUntilChanged())
             .subscribe(value => {
                 this.search = value;
                 return value;
@@ -88,7 +89,7 @@ export class TeamsSkillsComponent implements OnInit, OnChanges {
     }
 
     private getParamAsNumber(name: string, params: ParamMap) {
-        return Number.parseInt(params.get(name));
+        return Number.parseInt(params.get(name), 10);
     }
 
     loadAll() {

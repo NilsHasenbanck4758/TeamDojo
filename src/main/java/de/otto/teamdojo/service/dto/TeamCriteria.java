@@ -5,7 +5,7 @@ import io.github.jhipster.service.filter.LongFilter;
 import io.github.jhipster.service.filter.StringFilter;
 
 import java.io.Serializable;
-
+import java.util.Objects;
 
 /**
  * Criteria class for the Team entity. This class is used in TeamResource to
@@ -16,8 +16,8 @@ import java.io.Serializable;
  * fix type specific filters.
  */
 public class TeamCriteria implements Serializable {
-    private static final long serialVersionUID = 1L;
 
+    private static final long serialVersionUID = 1L;
 
     private LongFilter id;
 
@@ -34,9 +34,6 @@ public class TeamCriteria implements Serializable {
     private LongFilter skillsId;
 
     private LongFilter imageId;
-
-    public TeamCriteria() {
-    }
 
     public LongFilter getId() {
         return id;
@@ -100,6 +97,41 @@ public class TeamCriteria implements Serializable {
 
     public void setImageId(LongFilter imageId) {
         this.imageId = imageId;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final TeamCriteria that = (TeamCriteria) o;
+        return
+            Objects.equals(id, that.id) &&
+            Objects.equals(name, that.name) &&
+            Objects.equals(shortName, that.shortName) &&
+            Objects.equals(slogan, that.slogan) &&
+            Objects.equals(contactPerson, that.contactPerson) &&
+            Objects.equals(participationsId, that.participationsId) &&
+            Objects.equals(skillsId, that.skillsId) &&
+            Objects.equals(imageId, that.imageId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(
+        id,
+        name,
+        shortName,
+        slogan,
+        contactPerson,
+        participationsId,
+        skillsId,
+        imageId
+        );
     }
 
     @Override

@@ -5,7 +5,7 @@ import io.github.jhipster.service.filter.LongFilter;
 import io.github.jhipster.service.filter.StringFilter;
 
 import java.io.Serializable;
-
+import java.util.Objects;
 
 /**
  * Criteria class for the Dimension entity. This class is used in DimensionResource to
@@ -16,8 +16,8 @@ import java.io.Serializable;
  * fix type specific filters.
  */
 public class DimensionCriteria implements Serializable {
-    private static final long serialVersionUID = 1L;
 
+    private static final long serialVersionUID = 1L;
 
     private LongFilter id;
 
@@ -30,9 +30,6 @@ public class DimensionCriteria implements Serializable {
     private LongFilter levelsId;
 
     private LongFilter badgesId;
-
-    public DimensionCriteria() {
-    }
 
     public LongFilter getId() {
         return id;
@@ -82,15 +79,46 @@ public class DimensionCriteria implements Serializable {
         this.badgesId = badgesId;
     }
 
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final DimensionCriteria that = (DimensionCriteria) o;
+        return
+            Objects.equals(id, that.id) &&
+            Objects.equals(name, that.name) &&
+            Objects.equals(description, that.description) &&
+            Objects.equals(participantsId, that.participantsId) &&
+            Objects.equals(levelsId, that.levelsId) &&
+            Objects.equals(badgesId, that.badgesId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(
+        id,
+        name,
+        description,
+        participantsId,
+        levelsId,
+        badgesId
+        );
+    }
+
     @Override
     public String toString() {
         return "DimensionCriteria{" +
-            (id != null ? "id=" + id + ", " : "") +
-            (name != null ? "name=" + name + ", " : "") +
-            (description != null ? "description=" + description + ", " : "") +
-            (participantsId != null ? "participantsId=" + participantsId + ", " : "") +
-            (levelsId != null ? "levelsId=" + levelsId + ", " : "") +
-            (badgesId != null ? "badgesId=" + badgesId + ", " : "") +
+                (id != null ? "id=" + id + ", " : "") +
+                (name != null ? "name=" + name + ", " : "") +
+                (description != null ? "description=" + description + ", " : "") +
+                (participantsId != null ? "participantsId=" + participantsId + ", " : "") +
+                (levelsId != null ? "levelsId=" + levelsId + ", " : "") +
+                (badgesId != null ? "badgesId=" + badgesId + ", " : "") +
             "}";
     }
 

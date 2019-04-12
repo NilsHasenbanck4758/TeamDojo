@@ -1,18 +1,21 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { JhiLanguageService } from 'ng-jhipster';
-import { JhiLanguageHelper, LoginModalService, LoginService, Principal } from 'app/core';
+import { JhiLanguageHelper, AccountService, LoginModalService, LoginService } from 'app/core';
 import { ProfileService } from '../profiles/profile.service';
 import { TeamsSelectionService } from 'app/shared/teams-selection/teams-selection.service';
 import { TeamsSelectionComponent } from 'app/shared/teams-selection/teams-selection.component';
-import { ITeam, Team } from 'app/shared/model/team.model';
+import { ITeam } from 'app/shared/model/team.model';
 import { IBadge } from 'app/shared/model/badge.model';
 import { ILevel } from 'app/shared/model/level.model';
 import { IDimension } from 'app/shared/model/dimension.model';
 import { ISkill } from 'app/shared/model/skill.model';
 import { BreadcrumbService } from 'app/layouts/navbar/breadcrumb.service';
 import { IBreadcrumb } from 'app/shared/model/breadcrumb.model';
+import { SessionStorageService } from 'ngx-webstorage';
+
+import { VERSION } from 'app/app.constants';
 
 @Component({
     selector: 'jhi-navbar',
@@ -35,19 +38,22 @@ export class NavbarComponent implements OnInit {
     activeSkill: ISkill;
     breadcrumbs: IBreadcrumb[];
 
+    version: string;
+
     constructor(
+        private accountService: AccountService,
+        private breadcrumbService: BreadcrumbService,
         private loginService: LoginService,
         private languageService: JhiLanguageService,
         private languageHelper: JhiLanguageHelper,
-        private principal: Principal,
         private loginModalService: LoginModalService,
-        private teamsSelectionService: TeamsSelectionService,
         private profileService: ProfileService,
         private modalService: NgbModal,
         private router: Router,
-        private route: ActivatedRoute,
-        private breadcrumbService: BreadcrumbService
+        private sessionStorage: SessionStorageService,
+        private teamsSelectionService: TeamsSelectionService
     ) {
+        this.version = VERSION ? 'v' + VERSION : '';
         this.isNavbarCollapsed = true;
     }
 
@@ -80,6 +86,7 @@ export class NavbarComponent implements OnInit {
     }
 
     changeLanguage(languageKey: string) {
+        this.sessionStorage.store('locale', languageKey);
         this.languageService.changeLanguage(languageKey);
     }
 
@@ -88,7 +95,7 @@ export class NavbarComponent implements OnInit {
     }
 
     isAuthenticated() {
-        return this.principal.isAuthenticated();
+        return this.accountService.isAuthenticated();
     }
 
     login() {
@@ -106,7 +113,7 @@ export class NavbarComponent implements OnInit {
     }
 
     getImageUrl() {
-        return this.isAuthenticated() ? this.principal.getImageUrl() : null;
+        return this.isAuthenticated() ? this.accountService.getImageUrl() : null;
     }
 
     selectTeam(): NgbModalRef {

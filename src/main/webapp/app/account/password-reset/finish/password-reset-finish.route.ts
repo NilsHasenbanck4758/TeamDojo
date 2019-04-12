@@ -1,7 +1,7 @@
 import { Route } from '@angular/router';
 
-import { UserRouteAccessService } from 'app/core';
 import { PasswordResetFinishComponent } from './password-reset-finish.component';
+import { UserRouteAccessService } from 'app/core/auth/user-route-access-service';
 
 export const passwordResetFinishRoute: Route = {
     path: 'reset/finish',

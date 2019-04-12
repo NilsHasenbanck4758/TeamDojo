@@ -1,6 +1,5 @@
 package de.otto.teamdojo.web.rest;
 
-import com.codahale.metrics.annotation.Timed;
 import de.otto.teamdojo.service.LevelSkillQueryService;
 import de.otto.teamdojo.service.LevelSkillService;
 import de.otto.teamdojo.service.dto.LevelSkillCriteria;
@@ -47,7 +46,6 @@ public class LevelSkillResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PostMapping("/level-skills")
-    @Timed
     public ResponseEntity<LevelSkillDTO> createLevelSkill(@Valid @RequestBody LevelSkillDTO levelSkillDTO) throws URISyntaxException {
         log.debug("REST request to save LevelSkill : {}", levelSkillDTO);
         if (levelSkillDTO.getId() != null) {
@@ -69,7 +67,6 @@ public class LevelSkillResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PutMapping("/level-skills")
-    @Timed
     public ResponseEntity<LevelSkillDTO> updateLevelSkill(@Valid @RequestBody LevelSkillDTO levelSkillDTO) throws URISyntaxException {
         log.debug("REST request to update LevelSkill : {}", levelSkillDTO);
         if (levelSkillDTO.getId() == null) {
@@ -88,11 +85,22 @@ public class LevelSkillResource {
      * @return the ResponseEntity with status 200 (OK) and the list of levelSkills in body
      */
     @GetMapping("/level-skills")
-    @Timed
     public ResponseEntity<List<LevelSkillDTO>> getAllLevelSkills(LevelSkillCriteria criteria) {
         log.debug("REST request to get LevelSkills by criteria: {}", criteria);
         List<LevelSkillDTO> entityList = levelSkillQueryService.findByCriteria(criteria);
         return ResponseEntity.ok().body(entityList);
+    }
+
+    /**
+    * GET  /level-skills/count : count all the levelSkills.
+    *
+    * @param criteria the criterias which the requested entities should match
+    * @return the ResponseEntity with status 200 (OK) and the count in body
+    */
+    @GetMapping("/level-skills/count")
+    public ResponseEntity<Long> countLevelSkills(LevelSkillCriteria criteria) {
+        log.debug("REST request to count LevelSkills by criteria: {}", criteria);
+        return ResponseEntity.ok().body(levelSkillQueryService.countByCriteria(criteria));
     }
 
     /**
@@ -102,7 +110,6 @@ public class LevelSkillResource {
      * @return the ResponseEntity with status 200 (OK) and with body the levelSkillDTO, or with status 404 (Not Found)
      */
     @GetMapping("/level-skills/{id}")
-    @Timed
     public ResponseEntity<LevelSkillDTO> getLevelSkill(@PathVariable Long id) {
         log.debug("REST request to get LevelSkill : {}", id);
         Optional<LevelSkillDTO> levelSkillDTO = levelSkillService.findOne(id);
@@ -116,7 +123,6 @@ public class LevelSkillResource {
      * @return the ResponseEntity with status 200 (OK)
      */
     @DeleteMapping("/level-skills/{id}")
-    @Timed
     public ResponseEntity<Void> deleteLevelSkill(@PathVariable Long id) {
         log.debug("REST request to delete LevelSkill : {}", id);
         levelSkillService.delete(id);

@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -42,21 +40,7 @@ public class ProfileInfoResource {
     public ProfileInfoVM getActiveProfiles() {
         String[] activeProfiles = DefaultProfileUtil.getActiveProfiles(env);
         OrganizationDTO organization = getOrganization();
-        return new ProfileInfoVM(activeProfiles, getRibbonEnv(activeProfiles), organization);
-    }
-
-    private String getRibbonEnv(String[] activeProfiles) {
-        String[] displayOnActiveProfiles = jHipsterProperties.getRibbon().getDisplayOnActiveProfiles();
-        if (displayOnActiveProfiles == null) {
-            return null;
-        }
-        List<String> ribbonProfiles = new ArrayList<>(Arrays.asList(displayOnActiveProfiles));
-        List<String> springBootProfiles = Arrays.asList(activeProfiles);
-        ribbonProfiles.retainAll(springBootProfiles);
-        if (!ribbonProfiles.isEmpty()) {
-            return ribbonProfiles.get(0);
-        }
-        return null;
+        return new ProfileInfoVM(activeProfiles, organization);
     }
 
     private OrganizationDTO getOrganization() {
@@ -81,22 +65,15 @@ public class ProfileInfoResource {
 
         private String[] activeProfiles;
 
-        private String ribbonEnv;
-
         private OrganizationDTO organization;
 
-        ProfileInfoVM(String[] activeProfiles, String ribbonEnv, OrganizationDTO organization) {
+        ProfileInfoVM(String[] activeProfiles, OrganizationDTO organization) {
             this.activeProfiles = activeProfiles;
-            this.ribbonEnv = ribbonEnv;
             this.organization = organization;
         }
 
         public String[] getActiveProfiles() {
             return activeProfiles;
-        }
-
-        public String getRibbonEnv() {
-            return ribbonEnv;
         }
 
         public OrganizationDTO getOrganization() {

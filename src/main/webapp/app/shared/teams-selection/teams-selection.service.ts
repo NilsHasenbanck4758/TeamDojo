@@ -3,7 +3,8 @@ import { ITeam } from 'app/shared/model/team.model';
 import { TeamsService } from 'app/teams/teams.service';
 import { LocalStorageService } from 'ngx-webstorage';
 import { TeamSkillService } from 'app/entities/team-skill';
-import { Observable } from 'rxjs/Observable';
+import { of, Observable } from 'rxjs';
+import { tap, flatMap, map } from 'rxjs/operators';
 
 const TEAM_STORAGE_KEY = 'selectedTeamId';
 
@@ -20,19 +21,25 @@ export class TeamsSelectionService {
         if (teamIdStr !== null && !isNaN(Number(teamIdStr))) {
             return this.teamsService
                 .find(teamIdStr)
-                .do(result => {
-                    this._selectedTeam = result.body || null;
-                })
-                .flatMap(result => {
-                    return this.teamSkillService
-                        .query({ 'teamId.equals': result.body.id })
-                        .do(teamSkillRes => {
-                            this._selectedTeam.skills = teamSkillRes.body || [];
-                        })
-                        .map(() => result.body);
-                });
+                .pipe(
+                    tap(result => {
+                        this._selectedTeam = result.body || null;
+                    })
+                )
+                .pipe(
+                    flatMap(result => {
+                        return this.teamSkillService
+                            .query({ 'teamId.equals': result.body.id })
+                            .pipe(
+                                tap(teamSkillRes => {
+                                    this._selectedTeam.skills = teamSkillRes.body || [];
+                                })
+                            )
+                            .pipe(map(() => result.body));
+                    })
+                );
         }
-        return Observable.of(this._selectedTeam);
+        return of(this._selectedTeam);
     }
 
     get selectedTeam() {

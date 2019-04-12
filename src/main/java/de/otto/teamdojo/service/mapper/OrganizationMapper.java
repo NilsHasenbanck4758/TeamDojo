@@ -2,7 +2,6 @@ package de.otto.teamdojo.service.mapper;
 
 import de.otto.teamdojo.domain.*;
 import de.otto.teamdojo.service.dto.OrganizationDTO;
-
 import org.mapstruct.*;
 
 /**

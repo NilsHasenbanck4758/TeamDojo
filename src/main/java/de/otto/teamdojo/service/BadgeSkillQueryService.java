@@ -1,9 +1,6 @@
 package de.otto.teamdojo.service;
 
-import de.otto.teamdojo.domain.BadgeSkill;
-import de.otto.teamdojo.domain.BadgeSkill_;
-import de.otto.teamdojo.domain.Badge_;
-import de.otto.teamdojo.domain.Skill_;
+import de.otto.teamdojo.domain.*;
 import de.otto.teamdojo.repository.BadgeSkillRepository;
 import de.otto.teamdojo.service.dto.BadgeSkillCriteria;
 import de.otto.teamdojo.service.dto.BadgeSkillDTO;
@@ -17,6 +14,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.criteria.JoinType;
 import java.util.List;
 
 /**
@@ -57,7 +55,7 @@ public class BadgeSkillQueryService extends QueryService<BadgeSkill> {
      * Return a {@link Page} of {@link BadgeSkillDTO} which matches the criteria from the database
      *
      * @param criteria The object which holds all the filters, which the entities should match.
-     * @param page     The page, which should be returned.
+     * @param page The page, which should be returned.
      * @return the matching entities.
      */
     @Transactional(readOnly = true)
@@ -66,6 +64,18 @@ public class BadgeSkillQueryService extends QueryService<BadgeSkill> {
         final Specification<BadgeSkill> specification = createSpecification(criteria);
         return badgeSkillRepository.findAll(specification, page)
             .map(badgeSkillMapper::toDto);
+    }
+
+    /**
+     * Return the number of matching entities in the database
+     * @param criteria The object which holds all the filters, which the entities should match.
+     * @return the number of matching entities.
+     */
+    @Transactional(readOnly = true)
+    public long countByCriteria(BadgeSkillCriteria criteria) {
+        log.debug("count by criteria : {}", criteria);
+        final Specification<BadgeSkill> specification = createSpecification(criteria);
+        return badgeSkillRepository.count(specification);
     }
 
     /**
@@ -78,13 +88,14 @@ public class BadgeSkillQueryService extends QueryService<BadgeSkill> {
                 specification = specification.and(buildSpecification(criteria.getId(), BadgeSkill_.id));
             }
             if (criteria.getBadgeId() != null) {
-                specification = specification.and(buildReferringEntitySpecification(criteria.getBadgeId(), BadgeSkill_.badge, Badge_.id));
+                specification = specification.and(buildSpecification(criteria.getBadgeId(),
+                    root -> root.join(BadgeSkill_.badge, JoinType.LEFT).get(Badge_.id)));
             }
             if (criteria.getSkillId() != null) {
-                specification = specification.and(buildReferringEntitySpecification(criteria.getSkillId(), BadgeSkill_.skill, Skill_.id));
+                specification = specification.and(buildSpecification(criteria.getSkillId(),
+                    root -> root.join(BadgeSkill_.skill, JoinType.LEFT).get(Skill_.id)));
             }
         }
         return specification;
     }
-
 }

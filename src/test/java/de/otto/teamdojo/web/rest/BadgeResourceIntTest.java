@@ -22,10 +22,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Base64Utils;
 
 import javax.persistence.EntityManager;
 import java.time.Instant;
@@ -36,11 +34,9 @@ import java.util.List;
 
 import static de.otto.teamdojo.test.util.BadgeTestDataProvider.alwaysUpToDate;
 import static de.otto.teamdojo.test.util.BadgeTestDataProvider.awsReady;
-import static de.otto.teamdojo.test.util.DimensionTestDataProvider.security;
 import static de.otto.teamdojo.test.util.DimensionTestDataProvider.operations;
-import static de.otto.teamdojo.test.util.LevelTestDataProvider.orange;
-import static de.otto.teamdojo.test.util.LevelTestDataProvider.yellow;
-import static de.otto.teamdojo.test.util.LevelTestDataProvider.os1;
+import static de.otto.teamdojo.test.util.DimensionTestDataProvider.security;
+import static de.otto.teamdojo.test.util.LevelTestDataProvider.*;
 import static de.otto.teamdojo.test.util.SkillTestDataProvider.*;
 import static de.otto.teamdojo.test.util.SkillTestDataProvider.evilUserStories;
 import static de.otto.teamdojo.test.util.TeamTestDataProvider.ft1;

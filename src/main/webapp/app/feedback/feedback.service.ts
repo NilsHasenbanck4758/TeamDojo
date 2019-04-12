@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { SERVER_API_URL } from 'app/app.constants';
 import { IReport } from 'app/shared/model/report.model';
@@ -8,17 +9,17 @@ import { IReport } from 'app/shared/model/report.model';
 export type EntityResponseType = HttpResponse<IReport>;
 export type EntityArrayResponseType = HttpResponse<IReport[]>;
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class FeedbackService {
-    private resourceUrl = SERVER_API_URL + 'api/reports';
+    public resourceUrl = SERVER_API_URL + 'api/reports';
 
-    constructor(private http: HttpClient) {}
+    constructor(protected http: HttpClient) {}
 
     create(report: IReport): Observable<EntityResponseType> {
         const copy = this.convert(report);
         return this.http
             .post<IReport>(this.resourceUrl, copy, { observe: 'response' })
-            .map((res: EntityResponseType) => this.convertResponse(res));
+            .pipe(map((res: EntityResponseType) => this.convertResponse(res)));
     }
 
     private convertResponse(res: EntityResponseType): EntityResponseType {
